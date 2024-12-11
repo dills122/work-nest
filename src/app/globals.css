@@ -5,16 +5,6 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --red-picker-color: rgb(239 68 68);
-  --purple-picker-color: rgb(168 85 247);
-  --pink-picker-color: rgb(236 72 153);
-  --orange-picker-color: rgb(249 115 22);
-  --yellow-picker-color: rgb(252 211 77);
-  --green-picker-color: rgb(21 128 61);
-  --blue-picker-color: rgb(29 78 216);
-  --brown-picker-color: rgb(113 63 18);
-  --grey-picker-color: rgb(168 162 158);
-  --white-picker-color: rgb(255 255 255);
 }
 
 @media (prefers-color-scheme: dark) {
