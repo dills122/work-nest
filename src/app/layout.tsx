@@ -32,8 +32,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="min-h-full">
-          <div className="container mx-auto">{children}</div>
+        <div className="container mx-auto min-h-full flex flex-col items-center h-screen">
+          <div className="flex flex-col items-center w-3/4 p-4">
+            <h1 className="p-2 text-6xl">Work Nest</h1>
+            {children}
+          </div>
         </div>
       </body>
     </html>
