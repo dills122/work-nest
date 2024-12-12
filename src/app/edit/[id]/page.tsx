@@ -3,19 +3,15 @@
 import BackButton from "@/app/components/back-button";
 import CreateEditForm from "@/app/components/create-edit-form";
 import Spinner from "@/app/components/spinner";
+import * as taskService from "@/app/task.service";
 import Task from "@/app/types/task.model";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const PageConst = {
   buttonText: "Update Task",
+  successMessage: "Updated new task successfully",
 };
-
-const DBMock: Task[] = [
-  { id: 1, title: "Learn Next.js", completed: false, color: "red" },
-  { id: 2, title: "Build a Tailwind App", completed: false, color: "blue" },
-  { id: 3, title: "Deploy to Vercel", completed: false, color: "green" },
-];
 
 export default function Page() {
   const params = useParams<{ id: string }>();
@@ -29,15 +25,12 @@ export default function Page() {
     const fetchTask = async () => {
       try {
         const data = await getTask(taskId);
-        if (!data) {
-          router.push("/"); // Redirect to landing page if task is not found
-        } else {
-          setTask(data);
-          setLoading(false);
-        }
+        if (!data) return router.push("/");
+        setTask(data);
+        setLoading(false);
       } catch {
-        router.push("/"); // Redirect to landing page on fetch error
-      } 
+        router.push("/");
+      }
     };
 
     fetchTask();
@@ -56,6 +49,7 @@ export default function Page() {
             initialData={task}
             action={updateTask}
             buttonText={PageConst.buttonText}
+            successMessage={PageConst.successMessage}
           />
         )}
       </div>
@@ -64,24 +58,39 @@ export default function Page() {
 }
 
 async function getTask(id: number): Promise<Task | null> {
-  await new Promise((resolve) => setTimeout(resolve, 2000));
-  const task = DBMock.find((task) => task.id === id);
-  return task || null;
+  try {
+    return await taskService.fetchTaskById(id);
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 }
 
 async function updateTask(previousState: unknown, formData: FormData) {
+  const idFormValue = formData.get("id");
   const title = formData.get("taskTitle");
   const selectedColor = formData.get("color");
+  const isComplete = formData.get("completed");
   const fieldData = {
     title: String(title),
     color: String(selectedColor),
+    completed: !!isComplete,
   };
 
   if (!title || !selectedColor) {
     return { error: "Please add a title & select a color", fieldData };
   }
 
-  await new Promise((resolve) => setTimeout(resolve, 2000));
-
-  return { message: "Task updated", fieldData };
+  try {
+    const id = idFormValue ? parseInt(idFormValue.toString(), 10) : undefined;
+    if (!id) throw Error("Missing ID from form, unable to update");
+    await taskService.updateTask({
+      ...fieldData,
+      id: parseInt(id.toString(), 10),
+    });
+    return { message: "Task updated", fieldData };
+  } catch (error) {
+    console.error(error);
+    return { error: "Failed to update task", fieldData };
+  }
 }

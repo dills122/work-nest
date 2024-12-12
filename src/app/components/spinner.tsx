@@ -1,14 +1,14 @@
 import React from "react";
 
 interface SpinnerProps {
-  size?: string; // CSS size value, e.g., 'w-6 h-6'
-  color?: string; // Tailwind text color class, e.g., 'text-gray-500'
+  size?: string;
+  color?: string;
 }
 
-const Spinner: React.FC<SpinnerProps> = ({
+export default function Spinner({
   size = "w-8 h-8",
   color = "text-blue-500",
-}) => {
+}: SpinnerProps) {
   return (
     <div
       className={`animate-spin inline-block ${size} ${color} border-4 border-t-transparent border-solid rounded-full`}
@@ -17,6 +17,4 @@ const Spinner: React.FC<SpinnerProps> = ({
       <span className="sr-only">Loading...</span>
     </div>
   );
-};
-
-export default Spinner;
+}

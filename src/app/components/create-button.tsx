@@ -1,10 +1,10 @@
 import Link from "next/link";
-import Button from "./button";
+import Button from "@/app/components/button";
 
 export default function CreateButton() {
   return (
     <Link href="/create" className="w-full">
-      <Button text='Create' includeIcon={true} />
+      <Button text="Create Task" variant={'primary'} className="w-full" includeIcon={true} />
     </Link>
   );
 }

@@ -4,8 +4,8 @@ import Link from "next/link";
 import Button from "./components/button";
 
 const PageConst = {
-    buttonText: "Go Back Home",
-  };
+  buttonText: "Go Back Home",
+};
 
 export default function NotFoundPage() {
   return (
@@ -15,7 +15,7 @@ export default function NotFoundPage() {
         {`Oops! The page you're looking for doesn't exist.`}
       </p>
       <Link href="/">
-      <Button text={PageConst.buttonText} includeIcon={false} />
+        <Button text={PageConst.buttonText} includeIcon={false} />
       </Link>
     </div>
   );

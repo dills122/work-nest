@@ -1,48 +1,96 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 "use client";
 
-import { useState } from "react";
-import Task from "../types/task.model";
-import TaskItem from "./task-item";
+import NoTasks from "@/app/components/no-tasks";
+import Spinner from "@/app/components/spinner";
+import TaskItem from "@/app/components/task-item";
+import * as taskServices from "@/app/task.service";
+import Task from "@/app/types/task.model";
+import { handleError } from "@/app/utils/error.util";
+import { useEffect, useState } from "react";
 
 const TaskList = () => {
-  const [tasks, setTasks] = useState<Task[]>([
-    { id: 1, title: "Learn Next.js", completed: false, color: "red" },
-    { id: 2, title: "Build a Tailwind App", completed: false, color: "blue" },
-    { id: 3, title: "Deploy to Vercel", completed: false, color: "green" },
-  ]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const toggleTaskCompletion = (taskId: number) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === taskId ? { ...task, completed: !task.completed } : task
-      )
-    );
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const data: Task[] = await taskServices.fetchAllTasks();
+        setTasks(data);
+      } catch (err: unknown) {
+        setError(handleError(err, "Unknown error"));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTasks();
+  }, []);
+
+  const toggleTaskCompletion = async (taskId: number) => {
+    try {
+      const taskToUpdate = tasks.find((task) => task.id === taskId);
+      if (!taskToUpdate) return;
+
+      const updatedTaskObj = await taskServices.toggleTaskCompletion(
+        taskToUpdate
+      );
+      setTasks((prevTasks) =>
+        prevTasks.map((task) => (task.id === taskId ? updatedTaskObj : task))
+      );
+    } catch (err: unknown) {
+      setError(handleError(err, "Error completing task"));
+    }
   };
 
-  const deleteTask = (taskId: number) => {
-    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+  const deleteTask = async (taskId: number) => {
+    try {
+      await taskServices.deleteTask(taskId);
+      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+    } catch (err: unknown) {
+      setError(handleError(err, "Error deleting task"));
+    }
   };
 
   const completedCount = tasks.filter((task) => task.completed).length;
   const totalCount = tasks.length;
 
-  return (
-    <div className="max-w-md mx-auto p-6">
-      <div className="flex justify-between items-center pb-2 border-b">
-        <span className="text-sm">Completed: {completedCount}</span>
-        <span className="text-sm">Total: {totalCount}</span>
+  if (loading || error) {
+    return (
+      <div className="p-10 w-full">
+        <div className="relative mx-auto max-w-lg h-64 flex items-center justify-center p-4">
+          {loading ? (
+            <Spinner size="w-12 h-12" color="text-gray-700" />
+          ) : (
+            <div className="text-center text-red-500">Error: {error}</div>
+          )}
+        </div>
       </div>
-      <ul className="space-y-3 pt-4">
-        {tasks.map((task) => (
-          <TaskItem
-            key={task.id}
-            task={task}
-            onToggleCompletion={toggleTaskCompletion}
-            onDelete={deleteTask}
-          />
-        ))}
-      </ul>
+    );
+  }
+
+  return (
+    <div className="mx-auto p-6">
+      <div className="flex justify-between items-center pb-2 border-b text-md font-extrabold">
+        <span className="text-sky-500">Tasks: {totalCount}</span>
+        <span className="text-purple-500">
+          Completed: {completedCount} of {totalCount}
+        </span>
+      </div>
+      {tasks.length && (
+        <ul className="space-y-3 pt-4">
+          {tasks.map((task) => (
+            <TaskItem
+              key={task.id}
+              task={task}
+              onToggleCompletion={toggleTaskCompletion}
+              onDelete={deleteTask}
+            />
+          ))}
+        </ul>
+      )}
+      {!tasks.length && <NoTasks />}
     </div>
   );
 };

@@ -19,18 +19,20 @@ const colors = [
   { name: "White", value: "bg-neutral-50" },
 ];
 
-const  getColorValue = (name: string): string | undefined => {
-  const color = colors.find((color) => color.name.toLowerCase() === name.toLowerCase());
+const getColorValue = (name: string): string | undefined => {
+  const color = colors.find(
+    (color) => color.name.toLowerCase() === name.toLowerCase()
+  );
   return color ? color.value : undefined;
-}
+};
 
-export default function ColorPicker({
-initialColor
-}: ColorPickerProps) {
+export default function ColorPicker({ initialColor }: ColorPickerProps) {
   const [selectedColor, onColorChange] = useState<string>(initialColor || "");
   return (
     <div>
-      <label className="block text-sm font-medium mb-2">Color</label>
+      <label className="block text-md text-sky-500 font-extrabold mb-2">
+        Color
+      </label>
       <div className="flex gap-3 mb-6">
         {colors.map((color) => (
           <button
