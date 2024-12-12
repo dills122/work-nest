@@ -78,7 +78,7 @@ const TaskList = () => {
           Completed: {completedCount} of {totalCount}
         </span>
       </div>
-      {tasks.length && (
+      {tasks.length >= 1 && (
         <ul className="space-y-3 pt-4">
           {tasks.map((task) => (
             <TaskItem
@@ -90,7 +90,7 @@ const TaskList = () => {
           ))}
         </ul>
       )}
-      {!tasks.length && <NoTasks />}
+      {tasks.length === 0 && <NoTasks />}
     </div>
   );
 };

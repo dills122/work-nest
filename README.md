@@ -18,3 +18,15 @@ npm run dev
 npm run build
 npm run start
 ```
+
+App Screenshots
+
+![Home Page](/screenshots/home-page.png)
+
+![Empty Home Page](/screenshots/empty-list-home-page.png)
+
+![Delete Modal](/screenshots/delete-confirmation-modal.png)
+
+![Create Page](/screenshots/create-page.png)
+
+![Edit Page](/screenshots/edit-page.png)
